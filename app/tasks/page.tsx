@@ -14,7 +14,7 @@ import CreateTaskForm from "@/components/custom/new-task-form";
 
 type ColumnType = "PENDING" | "IN_PROGRESS" | "COMPLETED";
 
-export default function PanelPage() {
+export default function TaskListPage() {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
@@ -34,21 +34,25 @@ export default function PanelPage() {
     fetchTasks();
   }, []);
 
+  const filteredTasks = tasks.filter((t) =>
+    t.title.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   const columns = {
     PENDING: {
       name: "Pendente",
       color: "bg-yellow-50",
-      items: tasks.filter((t) => t.status === "PENDING"),
+      items: filteredTasks.filter((t) => t.status === "PENDING"),
     },
     IN_PROGRESS: {
       name: "Em andamento",
       color: "bg-green-50",
-      items: tasks.filter((t) => t.status === "IN_PROGRESS"),
+      items: filteredTasks.filter((t) => t.status === "IN_PROGRESS"),
     },
     COMPLETED: {
       name: "Finalizado",
       color: "bg-gray-100",
-      items: tasks.filter((t) => t.status === "COMPLETED"),
+      items: filteredTasks.filter((t) => t.status === "COMPLETED"),
     },
   };
 
@@ -89,6 +93,8 @@ export default function PanelPage() {
         setTasks(tasks);
       }
     }
+
+    setSelectedTaskId(null);
   };
 
   if (isLoading) {
@@ -144,9 +150,9 @@ export default function PanelPage() {
                               onClick={() => {
                                 setSelectedTaskId(task.id);
                               }}
-                              className={`transition-all ${
+                              className={`transition-all rounded-2xl ${
                                 selectedTaskId === task.id
-                                  ? "ring-2 ring-blue-400"
+                                  ? "ring-2 ring-blue-400 ring-offset-2 ring-offset-transparent"
                                   : ""
                               }`}
                             >
