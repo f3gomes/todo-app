@@ -11,7 +11,7 @@ interface Props {
 export default function Navbar({ searchTerm, setSearchTerm }: Props) {
   return (
     <header className="w-full bg-neutral-900 text-white px-6 py-4 shadow-lg">
-      <div className="max-w-7xl mx-auto flex items-center justify-between">
+      <div className="max-w-7xl mx-auto px-6 py-4 flex items-center justify-between">
         {/* Logo */}
 
         <div className="flex items-center gap-4">
