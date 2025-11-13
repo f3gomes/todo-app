@@ -9,6 +9,7 @@ import { TaskCard } from "@/components/custom/task-card";
 import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import Navbar from "@/components/custom/navbar";
+import EditTaskForm from "@/components/custom/edit-task-form";
 
 type ColumnType = "PENDING" | "IN_PROGRESS" | "COMPLETED";
 
@@ -17,6 +18,9 @@ export default function PanelPage() {
   const [isLoading, setIsLoading] = useState(true);
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedTaskId, setSelectedTaskId] = useState<number | null>(null);
+
+  const [selectedTaskEdit, setSelectedTaskEdit] = useState<Task | null>();
+  const [editModalOpen, setEditModalOpen] = useState(false);
 
   const fetchTasks = async () => {
     const list = await listTasks();
@@ -144,7 +148,13 @@ export default function PanelPage() {
                                   : ""
                               }`}
                             >
-                              <TaskCard task={task} fetchTasks={fetchTasks} />
+                              <TaskCard
+                                key={task.id}
+                                task={task}
+                                fetchTasks={fetchTasks}
+                                setEditModalOpen={setEditModalOpen}
+                                setSelectedTask={setSelectedTaskEdit}
+                              />
                             </div>
                           )}
                         </Draggable>
@@ -162,6 +172,22 @@ export default function PanelPage() {
           <div className="mt-6 text-sm text-gray-600">
             <strong>Tarefa selecionada:</strong> {selectedTaskId}
           </div>
+        )}
+
+        {selectedTaskEdit && (
+          <EditTaskForm
+            open={editModalOpen}
+            setOpen={() => {
+              // eslint-disable-next-line
+              setEditModalOpen;
+              setSelectedTaskEdit(null);
+            }}
+            task={selectedTaskEdit}
+            fetchTasks={async () => {
+              await fetchTasks();
+              setSelectedTaskEdit(null);
+            }}
+          />
         )}
       </div>
     </main>
