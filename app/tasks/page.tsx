@@ -10,6 +10,7 @@ import { DragDropContext, Droppable, Draggable } from "@hello-pangea/dnd";
 
 import Navbar from "@/components/custom/navbar";
 import EditTaskForm from "@/components/custom/edit-task-form";
+import CreateTaskForm from "@/components/custom/new-task-form";
 
 type ColumnType = "PENDING" | "IN_PROGRESS" | "COMPLETED";
 
@@ -21,6 +22,7 @@ export default function PanelPage() {
 
   const [selectedTaskEdit, setSelectedTaskEdit] = useState<Task | null>();
   const [editModalOpen, setEditModalOpen] = useState(false);
+  const [openCreate, setOpenCreate] = useState(false);
 
   const fetchTasks = async () => {
     const list = await listTasks();
@@ -107,7 +109,7 @@ export default function PanelPage() {
         </h1>
 
         <Button
-          onClick={() => console.log("Adicionar")}
+          onClick={() => setOpenCreate(true)}
           className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mb-4"
         >
           <Plus size={18} />
@@ -189,6 +191,12 @@ export default function PanelPage() {
             }}
           />
         )}
+
+        <CreateTaskForm
+          open={openCreate}
+          setOpen={setOpenCreate}
+          fetchTasks={fetchTasks}
+        />
       </div>
     </main>
   );

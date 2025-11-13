@@ -1,0 +1,133 @@
+"use client";
+
+import { useState, Dispatch, SetStateAction, useEffect } from "react";
+import { toast } from "sonner";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+
+import { DialogTitle } from "@radix-ui/react-dialog";
+
+import { Input } from "../ui/input";
+import { Label } from "../ui/label";
+import { Button } from "../ui/button";
+import { Dialog, DialogContent } from "../ui/dialog";
+import {
+  CardContent,
+  CardDescription,
+  CardFooter,
+  CardHeader,
+  CardTitle,
+} from "../ui/card";
+
+import { createTask } from "@/actions/api";
+import { taskFormData, taskSchema } from "@/schemas/task.schema";
+
+interface CreateTaskFormProps {
+  open: boolean;
+  setOpen: Dispatch<SetStateAction<boolean>>;
+  fetchTasks: () => Promise<void>;
+}
+
+export default function CreateTaskForm({
+  open,
+  setOpen,
+  fetchTasks,
+}: CreateTaskFormProps) {
+  const [loading, setLoading] = useState(false);
+
+  const {
+    register: formRegister,
+    control: formControl,
+    handleSubmit,
+    formState: { errors },
+    reset,
+  } = useForm<taskFormData>({
+    resolver: zodResolver(taskSchema),
+    defaultValues: {
+      title: "",
+      details: "",
+      author: "",
+      status: "PENDING",
+    },
+  });
+
+  useEffect(() => {
+    if (open) reset();
+  }, [open, reset]);
+
+  const onSubmit = async (data: taskFormData) => {
+    setLoading(true);
+    try {
+      await createTask(data);
+      toast.success("Tarefa criada com sucesso!");
+      fetchTasks();
+      setOpen(false);
+      reset();
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Erro ao criar a tarefa.");
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  return (
+    <Dialog open={open} onOpenChange={setOpen}>
+      <DialogContent className="bg-[#1a1a1a] text-white sm:max-w-[425px] border border-neutral-700 rounded-xl shadow-md">
+        <CardHeader>
+          <DialogTitle>
+            <CardTitle>Cadastrar Tarefa</CardTitle>
+          </DialogTitle>
+          <CardDescription className="text-neutral-400">
+            Preencha as informações da nova tarefa abaixo
+          </CardDescription>
+        </CardHeader>
+
+        <form onSubmit={handleSubmit(onSubmit)}>
+          <CardContent>
+            <div className="flex flex-col gap-6">
+              <div className="grid gap-2">
+                <Label htmlFor="title">Título</Label>
+                <Input id="title" type="text" {...formRegister("title")} />
+                {errors.title && (
+                  <span className="text-red-500 text-sm">
+                    {errors.title.message}
+                  </span>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="details">Descrição</Label>
+                <Input id="details" type="text" {...formRegister("details")} />
+                {errors.details && (
+                  <span className="text-red-500 text-sm">
+                    {errors.details.message}
+                  </span>
+                )}
+              </div>
+
+              <div className="grid gap-2">
+                <Label htmlFor="author">Autor</Label>
+                <Input id="author" type="text" {...formRegister("author")} />
+                {errors.author && (
+                  <span className="text-red-500 text-sm">
+                    {errors.author.message}
+                  </span>
+                )}
+              </div>
+            </div>
+          </CardContent>
+
+          <CardFooter className="flex flex-col gap-2 mt-4">
+            <Button
+              type="submit"
+              className="w-full bg-blue-600 hover:bg-blue-700"
+              disabled={loading}
+            >
+              {loading ? "Salvando..." : "Salvar"}
+            </Button>
+          </CardFooter>
+        </form>
+      </DialogContent>
+    </Dialog>
+  );
+}
