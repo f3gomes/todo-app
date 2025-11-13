@@ -45,7 +45,7 @@ export const updateTask = async (id: number, payload: TaskPayload) => {
 
 export const deleteTask = async (id: number) => {
   try {
-    const response = await api.delete(`/task/edit/${id}`);
+    const response = await api.delete(`/task/delete/${id}`);
 
     return response;
   } catch (error) {
