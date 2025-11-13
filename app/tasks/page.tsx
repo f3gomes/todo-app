@@ -110,7 +110,7 @@ export default function PanelPage() {
 
         <Button
           onClick={() => setOpenCreate(true)}
-          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mb-4"
+          className="flex items-center gap-2 bg-blue-600 hover:bg-blue-700 text-white mb-4 cursor-pointer"
         >
           <Plus size={18} />
           Nova Tarefa

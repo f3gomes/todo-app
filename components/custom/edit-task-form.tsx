@@ -160,7 +160,7 @@ export default function EditTaskForm({
           <CardFooter className="flex flex-col gap-2 mt-4">
             <Button
               type="submit"
-              className="w-full bg-blue-600 hover:bg-blue-700"
+              className="w-full bg-blue-600 hover:bg-blue-700 cursor-pointer"
               disabled={loading}
             >
               {loading ? "Salvando..." : "Salvar alterações"}
